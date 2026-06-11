@@ -13,6 +13,8 @@ import dotenv from 'dotenv';
 import dns from "dns";
 
 dotenv.config();
+console.log("FRONTEND_URL =", process.env.FRONTEND_URL);
+console.log("NODE_ENV =", process.env.NODE_ENV);
 console.log("GROQ =", process.env.GROQ_API_KEY);
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
