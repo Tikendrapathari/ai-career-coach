@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="theme-color" content="#6366f1" />
+    
+    <!-- Title - AI Career Coach Specific -->
+    <title>AI Career Coach - AI-Powered Interview Preparation & Career Growth Platform</title>
+    <meta name="description" content="Master your job interviews with AI Career Coach. Practice with AI mock interviews, get resume analysis, solve coding challenges, and receive personalized career guidance from our AI mentor. Perfect for placements and career growth." />
+    <meta name="keywords" content="AI career coach, mock interview, resume analyzer, coding interview, placement preparation, AI interviewer, career mentor, job preparation, interview practice, ATS resume, DSA practice, company specific preparation" />
+    <meta name="author" content="AI Career Coach" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Social Media - AI Career Coach Branding -->
+    <meta property="og:title" content="AI Career Coach - Your Personal AI Interview Preparation Platform" />
+    <meta property="og:description" content="Ace your interviews with AI-powered mock interviews, real-time facial analysis, voice recognition, and personalized career guidance. Join thousands of successful candidates who landed their dream jobs." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://aicareercoach.com" />
+    <meta property="og:image" content="https://aicareercoach.com/og-image.jpg" />
+    <meta property="og:site_name" content="AI Career Coach" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI Career Coach - AI-Powered Interview Preparation" />
+    <meta name="twitter:description" content="Practice with AI mock interviews, get resume analysis, and receive personalized career guidance." />
+    <meta name="twitter:image" content="https://aicareercoach.com/twitter-image.jpg" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.gemini.google.com" />
+    
+    <!-- Google Fonts - Inter (Modern SaaS Font) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100;14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    
+    <!-- Favicon for AI Career Coach -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Preload Critical CSS -->
+    <link rel="preload" as="style" href="/src/styles/globals.css" />
+    
+    <!-- Mobile & PWA Settings -->
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AI Career Coach" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://aicareercoach.com" />
+    
+    <!-- Alternate Languages (if needed) -->
+    <link rel="alternate" hreflang="en" href="https://aicareercoach.com" />
+    <link rel="alternate" hreflang="hi" href="https://aicareercoach.com/hi" />
+  </head>
+  
+  <body>
+    <!-- React Root Element - AI Career Coach App Mounts Here -->
+    <div id="root"></div>
+    
+    <!-- Custom Loading Animation for AI Career Coach -->
+    <div id="loading-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    ">
+      <div style="text-align: center;">
+        <!-- Animated Logo -->
+        <div style="
+          width: 80px;
+          height: 80px;
+          margin: 0 auto 24px;
+          position: relative;
+        ">
+          <!-- Outer Ring -->
+          <div style="
+            position: absolute;
+            inset: 0;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+          "></div>
+          <!-- Inner Ring -->
+          <div style="
+            position: absolute;
+            inset: 10px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #8b5cf6;
+            animation: spin 1.5s linear infinite;
+          "></div>
+          <!-- Center Dot -->
+          <div style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            animation: glow 1.5s ease-in-out infinite;
+          "></div>
+        </div>
+        
+        <!-- Brand Name -->
+        <div style="
+          background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          font-size: 28px;
+          font-weight: 800;
+          margin-bottom: 12px;
+          letter-spacing: -0.5px;
+        ">
+          AI Career Coach
+        </div>
+        
+        <!-- Tagline -->
+        <div style="color: #9ca3af; font-size: 14px; margin-bottom: 24px; letter-spacing: 0.5px;">
+          Your AI-Powered Interview Preparation Platform
+        </div>
+        
+        <!-- Loading Dots -->
+        <div style="display: flex; gap: 8px; justify-content: center;">
+          <div style="width: 8px; height: 8px; background: #6366f1; border-radius: 50%; animation: bounce 0.6s ease-in-out infinite;"></div>
+          <div style="width: 8px; height: 8px; background: #8b5cf6; border-radius: 50%; animation: bounce 0.6s ease-in-out infinite 0.1s;"></div>
+          <div style="width: 8px; height: 8px; background: #06b6d4; border-radius: 50%; animation: bounce 0.6s ease-in-out infinite 0.2s;"></div>
+        </div>
+        
+        <!-- Loading Text -->
+        <div style="color: #4b5563; font-size: 12px; margin-top: 24px;">
+          Loading your career journey...
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      /* Keyframe Animations */
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.05); }
+      }
+      
+      @keyframes glow {
+        0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+      }
+      
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+      
+      /* Global Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+      
+      /* Custom Scrollbar - AI Career Coach Theme */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #1f2937;
+        border-radius: 10px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 10px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      }
+      
+      /* Selection Color */
+      ::selection {
+        background: rgba(99, 102, 241, 0.3);
+        color: #ffffff;
+      }
+      
+      ::-moz-selection {
+        background: rgba(99, 102, 241, 0.3);
+        color: #ffffff;
+      }
+      
+      /* Focus Outline for Accessibility */
+      :focus-visible {
+        outline: 2px solid #6366f1;
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      
+      /* Remove Tap Highlight on Mobile */
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      /* Disable Pull-to-Refresh on Mobile */
+      body {
+        overscroll-behavior-y: none;
+      }
+      
+      /* Smooth Loading Transition */
+      body.loaded #loading-overlay {
+        opacity: 0;
+        visibility: hidden;
+      }
+      
+      /* Gradient Text Utility */
+      .gradient-text {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      
+      /* Glass Morphism Effect */
+      .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+    
+    <!-- Main React Application Entry Point -->
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Hide Loading Overlay When React is Ready -->
+    <script>
+      // Function to hide loading overlay
+      function hideLoadingOverlay() {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            document.body.classList.add('loaded');
+          }, 800);
+        }
+      }
+      
+      // Hide overlay when page loads
+      window.addEventListener('load', () => {
+        setTimeout(hideLoadingOverlay, 1500);
+      });
+      
+      // Also hide when React mounts (fallback)
+      if (document.readyState === 'complete') {
+        hideLoadingOverlay();
+      }
+      
+      // Service Worker Registration for PWA Features
+      if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('AI Career Coach SW registered:', registration);
+          }).catch(error => {
+            console.log('SW registration failed:', error);
+          });
+        });
+      }
+      
+      // Prevent Right Click (Optional - for security)
+      // document.addEventListener('contextmenu', (e) => e.preventDefault());
+      
+      // Console message for developers
+      console.log('%c🚀 AI Career Coach - Your Journey to Success Starts Here!', 'color: #6366f1; font-size: 16px; font-weight: bold;');
+      console.log('%c💡 Tips: Practice regularly, analyze your performance, and track your progress!', 'color: #10b981; font-size: 12px;');
+    </script>
+  </body>
+</html>
