@@ -1,6 +1,3 @@
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
-
 // Cloudflare + Google DNS
 import express from 'express';
 import mongoose from 'mongoose';
@@ -10,30 +7,39 @@ import rateLimit from 'express-rate-limit';
 import { Server } from 'socket.io';
 import http from 'http';
 import dotenv from 'dotenv';
-import dns from "dns";
+import dns from 'dns';
 
 dotenv.config();
+
 console.log("FRONTEND_URL =", process.env.FRONTEND_URL);
 console.log("NODE_ENV =", process.env.NODE_ENV);
-console.log("GROQ =", process.env.GROQ_API_KEY);
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://ai-career-coach-nc3m.vercel.app'
+];
+
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
     credentials: true
   }
 });
 
 // Security middleware
 app.use(helmet());
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true
 }));
+
 app.use(express.json());
 
 // Rate limiting
@@ -41,12 +47,16 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100
 });
+
 app.use('/api/', limiter);
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://complete_backend:4Bpk2eiH99OpJ1D0@cluster0.i2qqyan.mongodb.net/ai-career-coach')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(
+  process.env.MONGODB_URI ||
+  'mongodb+srv://complete_backend:4Bpk2eiH99OpJ1D0@cluster0.i2qqyan.mongodb.net/ai-career-coach'
+)
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Home Route
 app.get('/', (req, res) => {
@@ -73,24 +83,25 @@ app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/coding', codingRoutes);
 app.use('/api/report', reportRoutes);
 
-// Socket.io for real-time interview
+// Socket.io
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
-  
+
   socket.on('join-interview', (sessionId) => {
     socket.join(`interview-${sessionId}`);
   });
-  
+
   socket.on('voice-response', (data) => {
     io.to(`interview-${data.sessionId}`).emit('voice-response', data);
   });
-  
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
 });
 
 const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
