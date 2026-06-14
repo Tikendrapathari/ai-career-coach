@@ -41,7 +41,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
+        <!--<link rel="manifest" href="/manifest.json" /> -->
     
     <!-- Preload Critical CSS -->
     <link rel="preload" as="style" href="/src/styles/globals.css" />
@@ -295,7 +295,7 @@
       }
       
       // Service Worker Registration for PWA Features
-      if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      if ('serviceWorker' in navigator)  {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').then(registration => {
             console.log('AI Career Coach SW registered:', registration);
