@@ -29,7 +29,6 @@ const ResumeAnalyzer = () => {
     
     setGeneratingImproved(true);
     try {
-      // ✅ CORRECT API ENDPOINT - /improve/:id
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/resume/improve/${analysis.id}`,
         {},
@@ -96,84 +95,86 @@ const ResumeAnalyzer = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <Sidebar />
       
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <h1 className="text-3xl font-bold text-white mb-2">Resume Analyzer</h1>
-            <p className="text-gray-300">
-              Get AI-powered insights to improve your resume and increase ATS score
-            </p>
-          </motion.div>
+      <div className="flex-1 overflow-x-hidden">
+        <div className="pt-14 lg:pt-0">
+          <div className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8 max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-5 sm:mb-8"
+            >
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">Resume Analyzer</h1>
+              <p className="text-gray-300 text-sm sm:text-base">
+                Get AI-powered insights to improve your resume and increase ATS score
+              </p>
+            </motion.div>
 
-          {!analysis ? (
-            <ResumeUploader onUploadComplete={handleUploadComplete} />
-          ) : (
-            <div className="space-y-6">
-              <ResumeScore 
-                score={analysis.atsScore}
-                strengths={analysis.strengths}
-                weaknesses={analysis.weaknesses}
-              />
-              
-              <ImprovementSuggestions 
-                suggestions={analysis.suggestions}
-                missingKeywords={analysis.missingKeywords}
-                skillGap={analysis.skillGap}
-              />
-              
-              {/* Action Buttons */}
-              <div className="flex gap-4 flex-wrap">
-                <Button
-                  onClick={generateImprovedResume}
-                  isLoading={generatingImproved}
-                  variant="primary"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Generate ATS-Friendly Resume
-                </Button>
+            {!analysis ? (
+              <ResumeUploader onUploadComplete={handleUploadComplete} />
+            ) : (
+              <div className="space-y-5 sm:space-y-6">
+                <ResumeScore 
+                  score={analysis.atsScore}
+                  strengths={analysis.strengths}
+                  weaknesses={analysis.weaknesses}
+                />
                 
-                <Button
-                  onClick={downloadReport}
-                  variant="secondary"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Report
-                </Button>
-              </div>
-              
-              {/* Display Improved Resume */}
-              {improvedResume && (
-                <Card>
-                  <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-green-400" />
-                      ATS-Friendly Resume
-                    </h2>
-                    <div className="flex gap-2">
-                      <Button onClick={copyToClipboard} variant="secondary" size="sm">
-                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        {copied ? 'Copied!' : 'Copy'}
-                      </Button>
-                      <Button onClick={downloadResume} variant="primary" size="sm">
-                        <Download className="w-4 h-4 mr-1" />
-                        Download
-                      </Button>
+                <ImprovementSuggestions 
+                  suggestions={analysis.suggestions}
+                  missingKeywords={analysis.missingKeywords}
+                  skillGap={analysis.skillGap}
+                />
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={generateImprovedResume}
+                    isLoading={generatingImproved}
+                    variant="primary"
+                    className="w-full sm:w-auto"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate ATS-Friendly Resume
+                  </Button>
+                  
+                  <Button
+                    onClick={downloadReport}
+                    variant="secondary"
+                    className="w-full sm:w-auto"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Report
+                  </Button>
+                </div>
+                
+                {improvedResume && (
+                  <Card>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                      <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-green-400" />
+                        ATS-Friendly Resume
+                      </h2>
+                      <div className="flex gap-2 w-full sm:w-auto">
+                        <Button onClick={copyToClipboard} variant="secondary" size="sm" className="flex-1 sm:flex-initial">
+                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          {copied ? 'Copied!' : 'Copy'}
+                        </Button>
+                        <Button onClick={downloadResume} variant="primary" size="sm" className="flex-1 sm:flex-initial">
+                          <Download className="w-4 h-4 mr-1" />
+                          Download
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  <pre className="bg-black/30 p-4 rounded-lg overflow-x-auto text-gray-300 font-mono text-sm whitespace-pre-wrap max-h-[500px] overflow-y-auto">
-                    {improvedResume}
-                  </pre>
-                </Card>
-              )}
-            </div>
-          )}
+                    <pre className="bg-black/30 p-3 sm:p-4 rounded-lg overflow-x-auto text-gray-300 font-mono text-xs sm:text-sm whitespace-pre-wrap max-h-[500px] overflow-y-auto">
+                      {improvedResume}
+                    </pre>
+                  </Card>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
