@@ -18,7 +18,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validation
     if (!name.trim()) {
       toast.error('Please enter your full name');
       return;
@@ -45,20 +44,11 @@ const Register = () => {
     }
     
     setLoading(true);
+    const success = await register(name, email, password);
+    setLoading(false);
     
-    try {
-      const success = await register(name, email, password);
-      if (success) {
-        toast.success('Registration successful! Welcome to AI Career Coach 🎉');
-        navigate('/dashboard');
-      } else {
-        // Error message already shown by register function
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
-      setLoading(false);
+    if (success) {
+      navigate('/dashboard');
     }
   };
 
@@ -130,11 +120,7 @@ const Register = () => {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 disabled={loading}
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                ) : (
-                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                )}
+                {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />}
               </button>
             </div>
             <p className="text-gray-500 text-xs mt-1">Password must be at least 6 characters</p>
