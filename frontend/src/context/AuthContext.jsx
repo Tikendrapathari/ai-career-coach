@@ -9,54 +9,51 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchUser();
-    } else {
-      setLoading(false);
+    const storedUser = localStorage.getItem('user');
+    
+    if (token && storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch (error) {
+        console.error('Error parsing user:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
+    setLoading(false);
   }, []);
-  
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`);
-      setUser(response.data.user);
-    } catch (error) {
-      localStorage.removeItem('token');
-      delete axios.defaults.headers.common['Authorization'];
-    } finally {
-      setLoading(false);
-    }
-  };
-  
+
   const login = async (email, password) => {
     try {
-      console.log("ENV =", import.meta.env.VITE_API_URL);
-
-      const loginUrl = `${import.meta.env.VITE_API_URL}/api/auth/login`;
-
-      console.log("LOGIN URL =", loginUrl);
-      
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
         email,
         password
       });
       
       const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      toast.success('Logged in successfully!');
-      return true;
+      
+      if (response.data.success) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setUser(user);
+        toast.success('Login successful!');
+        return true;
+      } else {
+        toast.error(response.data.message || 'Login failed');
+        return false;
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
       return false;
     }
   };
-  
+
   const register = async (name, email, password) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
@@ -66,24 +63,33 @@ export const AuthProvider = ({ children }) => {
       });
       
       const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      toast.success('Registered successfully!');
-      return true;
+      
+      if (response.data.success) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setUser(user);
+        toast.success('Registration successful! Welcome 🎉');
+        return true;
+      } else {
+        toast.error(response.data.message || 'Registration failed');
+        return false;
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', error);
+      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
       return false;
     }
   };
-  
+
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
     toast.success('Logged out successfully');
   };
-  
+
   const value = {
     user,
     loading,
@@ -91,7 +97,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout
   };
-  
+
   return (
     <AuthContext.Provider value={value}>
       {children}
