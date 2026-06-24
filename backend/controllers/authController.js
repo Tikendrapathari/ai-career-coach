@@ -12,15 +12,20 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     
-    console.log('📝 Registration attempt for:', email);
+    // Validation
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, email and password'
+      });
+    }
     
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log('❌ User already exists:', email);
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'User already exists' 
+        message: 'User already exists'
       });
     }
     
@@ -47,23 +52,18 @@ export const register = async (req, res) => {
     });
     
     await user.save();
-    console.log('✅ User created successfully:', email);
     
     // Generate token
     const token = generateToken(user._id);
-    console.log('🔑 Token generated for:', email);
     
-    // Send welcome email (don't wait for it)
-    try {
-      await sendWelcomeEmail(email, name);
-    } catch (emailError) {
-      console.log('⚠️ Email sending failed but user created');
-    }
+    // Send email in background
+    sendWelcomeEmail(email, name).catch(err => {
+      console.log('Email sending failed but user created:', err.message);
+    });
     
-    // Return response with token and user data
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: 'Registration successful',
       token,
       user: {
         id: user._id,
@@ -75,10 +75,10 @@ export const register = async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ Registration error:', error);
-    res.status(500).json({ 
+    console.error('Registration error:', error);
+    res.status(500).json({
       success: false,
-      message: error.message || 'Registration failed' 
+      message: 'Registration failed. Please try again.'
     });
   }
 };
@@ -87,28 +87,30 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    console.log('🔐 Login attempt for:', email);
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide email and password'
+      });
+    }
     
     const user = await User.findOne({ email });
     if (!user) {
-      console.log('❌ User not found:', email);
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid credentials' 
+        message: 'Invalid credentials'
       });
     }
     
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      console.log('❌ Invalid password for:', email);
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid credentials' 
+        message: 'Invalid credentials'
       });
     }
     
     const token = generateToken(user._id);
-    console.log('✅ Login successful for:', email);
     
     res.json({
       success: true,
@@ -123,11 +125,12 @@ export const login = async (req, res) => {
         statistics: user.statistics
       }
     });
+    
   } catch (error) {
-    console.error('❌ Login error:', error);
-    res.status(500).json({ 
+    console.error('Login error:', error);
+    res.status(500).json({
       success: false,
-      message: error.message || 'Login failed' 
+      message: 'Login failed. Please try again.'
     });
   }
 };
@@ -136,7 +139,12 @@ export const googleAuth = async (req, res) => {
   try {
     const { name, email, googleId, avatar } = req.body;
     
-    console.log('🔑 Google auth attempt for:', email);
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
     
     let user = await User.findOne({ email });
     
@@ -160,17 +168,9 @@ export const googleAuth = async (req, res) => {
         }
       });
       await user.save();
-      console.log('✅ Google user created:', email);
-      
-      try {
-        await sendWelcomeEmail(email, name);
-      } catch (emailError) {
-        console.log('⚠️ Email sending failed but user created');
-      }
     }
     
     const token = generateToken(user._id);
-    console.log('✅ Google auth successful for:', email);
     
     res.json({
       success: true,
@@ -186,10 +186,10 @@ export const googleAuth = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ Google auth error:', error);
-    res.status(500).json({ 
+    console.error('Google auth error:', error);
+    res.status(500).json({
       success: false,
-      message: error.message || 'Google auth failed' 
+      message: 'Google login failed. Please try again.'
     });
   }
 };
@@ -198,19 +198,19 @@ export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select('-password');
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       });
     }
-    res.json({ 
+    res.json({
       success: true,
-      user 
+      user
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: error.message 
+      message: 'Failed to get user profile'
     });
   }
 };
@@ -218,30 +218,39 @@ export const getMe = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
     
-    if (!user) {
-      return res.status(404).json({ 
+    if (!email) {
+      return res.status(400).json({
         success: false,
-        message: 'User not found' 
+        message: 'Please provide email'
+      });
+    }
+    
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
       });
     }
     
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
     
-    await sendPasswordResetEmail(email, resetToken);
+    sendPasswordResetEmail(email, resetToken).catch(err => {
+      console.log('Password reset email failed:', err.message);
+    });
     
-    res.json({ 
+    res.json({
       success: true,
-      message: 'Password reset email sent' 
+      message: 'Password reset email sent'
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: error.message 
+      message: 'Failed to send reset email'
     });
   }
 };
@@ -250,15 +259,22 @@ export const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
     
+    if (!token || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide token and new password'
+      });
+    }
+    
     const user = await User.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() }
     });
     
     if (!user) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Invalid or expired token' 
+        message: 'Invalid or expired token'
       });
     }
     
@@ -267,14 +283,14 @@ export const resetPassword = async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
     
-    res.json({ 
+    res.json({
       success: true,
-      message: 'Password reset successful' 
+      message: 'Password reset successful'
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: error.message 
+      message: 'Failed to reset password'
     });
   }
 };
@@ -284,6 +300,12 @@ export const updateProfile = async (req, res) => {
     const { name, skills, experience, education, dreamJob } = req.body;
     
     const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
     
     if (name) user.name = name;
     if (skills) user.profile.skills = skills;
@@ -305,9 +327,9 @@ export const updateProfile = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: error.message 
+      message: 'Failed to update profile'
     });
   }
 };
